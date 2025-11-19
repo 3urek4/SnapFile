@@ -1,3 +1,4 @@
+import { list } from '@vercel/blob';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
@@ -9,16 +10,27 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Code required' }, { status: 400 });
     }
 
-    // Fetch metadata from Vercel Blob
-    const metadataUrl = `${process.env.BLOB_READ_WRITE_TOKEN ? 'https://' + process.env.BLOB_READ_WRITE_TOKEN.split('_')[1] + '.public.blob.vercel-storage.com' : ''}/metadata/${code}.json`;
-    
-    // Try to fetch from Vercel Blob
-    const response = await fetch(metadataUrl);
-    
-    if (!response.ok) {
+    // List all blobs with the metadata prefix for this code
+    const { blobs } = await list({
+      prefix: `metadata/${code}`,
+      token: process.env.BLOB_READ_WRITE_TOKEN,
+    });
+
+    if (blobs.length === 0) {
       return NextResponse.json(
         { error: 'Invalid or expired code' },
         { status: 404 }
+      );
+    }
+
+    // Fetch the metadata JSON from the blob URL
+    const metadataBlob = blobs[0];
+    const response = await fetch(metadataBlob.url);
+    
+    if (!response.ok) {
+      return NextResponse.json(
+        { error: 'Failed to retrieve metadata' },
+        { status: 500 }
       );
     }
 

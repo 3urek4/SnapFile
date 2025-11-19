@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 // Generate a random 6-character code
 function generateCode(): string {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Removed ambiguous chars
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   let code = '';
   for (let i = 0; i < 6; i++) {
     code += chars.charAt(Math.floor(Math.random() * chars.length));
@@ -28,6 +28,7 @@ export async function POST(request: NextRequest) {
       const blob = await put(`${code}/${file.name}`, file, {
         access: 'public',
         addRandomSuffix: false,
+        token: process.env.BLOB_READ_WRITE_TOKEN,
       });
 
       uploadedFiles.push({
@@ -42,13 +43,14 @@ export async function POST(request: NextRequest) {
       code,
       files: uploadedFiles,
       createdAt: Date.now(),
-      expiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
+      expiresAt: Date.now() + 24 * 60 * 60 * 1000,
     };
 
     // Store metadata in Vercel Blob as JSON
     await put(`metadata/${code}.json`, JSON.stringify(metadata), {
       access: 'public',
       addRandomSuffix: false,
+      token: process.env.BLOB_READ_WRITE_TOKEN,
     });
 
     return NextResponse.json({ code, files: uploadedFiles });
