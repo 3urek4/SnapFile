@@ -155,375 +155,379 @@ export default function App() {
   const shareUrl = `${window.location.origin}?code=${retrievalCode}`
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-2xl">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <div className="inline-block mb-4 transform hover:scale-110 transition-transform duration-300">
-            <div className="text-6xl">📦</div>
+    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 flex flex-col">
+      {/* Header */}
+      <header className="border-b border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900">
+        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-neutral-900 dark:bg-white flex items-center justify-center">
+              <svg className="w-5 h-5 text-white dark:text-neutral-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+              </svg>
+            </div>
+            <span className="text-lg font-semibold text-neutral-900 dark:text-white">SnapFile</span>
           </div>
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-2 hover:scale-105 transition-transform duration-300">
-            SnapFile
-          </h1>
-          <p className="text-gray-600 font-light">Simple. Secure. Temporary.</p>
-        </div>
-
-        {/* Mode Switcher */}
-        <div className="flex gap-2 mb-8 bg-white/80 backdrop-blur-lg rounded-2xl p-1.5 shadow-lg border border-white/20">
-          <button
-            onClick={() => {
-              setMode('upload')
-              setRetrievalCode('')
-              setError('')
-              setRetrievedFile(null)
-            }}
-            className={`flex-1 py-3 rounded-xl font-medium transition-all duration-300 ${
-              mode === 'upload'
-                ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg scale-105'
-                : 'text-gray-600 hover:bg-gray-50/50 hover:scale-105'
-            }`}
+          <a
+            href="https://github.com/3urek4"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors"
           >
-            📤 Upload
-          </button>
-          <button
-            onClick={() => {
-              setMode('retrieve')
-              setError('')
-            }}
-            className={`flex-1 py-3 rounded-xl font-medium transition-all duration-300 ${
-              mode === 'retrieve'
-                ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg scale-105'
-                : 'text-gray-600 hover:bg-gray-50/50 hover:scale-105'
-            }`}
-          >
-            🔓 Retrieve
-          </button>
+            by 3urek4
+          </a>
         </div>
+      </header>
 
-        {/* Main Card */}
-        <div className="card-glass p-8">
-          {mode === 'upload' ? (
-            <>
-              {!retrievalCode ? (
-                <>
-                  {/* Drop Zone */}
-                  <div
-                    {...getRootProps()}
-                    className={`border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer transition-all duration-300 ${
-                      isDragActive
-                        ? 'border-purple-500 bg-purple-50 scale-105 shadow-lg'
-                        : 'border-gray-300 hover:border-purple-400 hover:bg-gray-50 hover:scale-[1.02]'
-                    }`}
-                  >
-                    <input {...getInputProps()} />
-                    <div className="transform transition-transform duration-300 hover:scale-110">
-                      <svg
-                        className="mx-auto h-16 w-16 text-gray-400 mb-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={1.5}
-                          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                        />
-                      </svg>
-                    </div>
-                    {isDragActive ? (
-                      <p className="text-lg text-purple-600 font-medium">✨ Drop file here</p>
-                    ) : (
-                      <>
-                        <p className="text-lg text-gray-700 font-medium mb-2">
-                          Drop a file here or click to browse
-                        </p>
-                        <p className="text-sm text-gray-500">Single file • Available for 24 hours ⏰</p>
-                      </>
-                    )}
-                  </div>
+      <main className="flex-1 flex items-center justify-center p-6">
+        <div className="w-full max-w-2xl">
 
-                  {/* Selected File */}
-                  {file && (
-                    <div className="mt-6">
-                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl hover:shadow-md transition-all duration-300 hover:scale-[1.02]">
-                        <span className="text-sm text-gray-700 truncate flex items-center gap-2">
-                          <span>📄</span>
-                          {file.name}
-                        </span>
-                        <span className="text-xs text-gray-500 ml-2 bg-white/70 px-2 py-1 rounded-full">
-                          {(file.size / 1024 / 1024).toFixed(2)} MB
-                        </span>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Upload Progress */}
-                  {uploading && uploadProgress > 0 && (
-                    <div className="mt-6">
-                      <div className="flex justify-between text-sm text-gray-600 mb-2">
-                        <span>Uploading...</span>
-                        <span>{Math.round(uploadProgress)}%</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-                        <div
-                          className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transition-all duration-300"
-                          style={{ width: `${uploadProgress}%` }}
-                        />
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Error */}
-                  {error && (
-                    <div className="mt-4 p-4 bg-red-50 rounded-xl border border-red-100">
-                      <p className="text-sm text-red-600">❌ {error}</p>
-                    </div>
-                  )}
-
-                  {/* Upload Button */}
-                  <button
-                    onClick={handleUpload}
-                    disabled={!file || uploading}
-                    className="btn-gradient w-full mt-6 py-4 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 disabled:hover:scale-100"
-                  >
-                    {uploading ? '⏳ Uploading...' : '🚀 Upload File'}
-                  </button>
-                </>
-              ) : (
-                // Success State
-                <div className="text-center py-8">
-                  <div className="w-16 h-16 bg-gradient-to-br from-green-100 to-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
-                    <svg
-                      className="w-8 h-8 text-green-600"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                  </div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">✨ Upload Complete!</h2>
-                  <p className="text-gray-600 mb-8">Use this code to retrieve your file</p>
-                  
-                  {/* Retrieval Code */}
-                  <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 rounded-2xl p-6 mb-4 border-2 border-dashed border-purple-200">
-                    <p className="text-4xl font-mono font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent tracking-wider mb-4">
-                      {retrievalCode}
-                    </p>
-                    <button
-                      onClick={copyToClipboard}
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-white/70 hover:bg-white rounded-lg text-sm font-medium text-gray-700 hover:text-purple-600 transition-all hover:scale-105"
-                    >
-                      {copied ? (
-                        <>
-                          <span className="i-carbon-checkmark w-4 h-4" />
-                          Copied!
-                        </>
-                      ) : (
-                        <>
-                          <span className="i-carbon-copy w-4 h-4" />
-                          Copy Code
-                        </>
-                      )}
-                    </button>
-                  </div>
-
-                  {/* QR Code */}
-                  <div className="mb-6 flex justify-center">
-                    <div className="bg-white p-4 rounded-2xl shadow-lg">
-                      <QRCodeSVG value={shareUrl} size={160} level="H" />
-                      <p className="text-xs text-gray-500 mt-2 text-center">Scan to access</p>
-                    </div>
-                  </div>
-
-                  {/* Share Link */}
-                  <div className="mb-6">
-                    <button
-                      onClick={copyLink}
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg text-sm font-medium hover:shadow-lg transition-all hover:scale-105"
-                    >
-                      {copied ? (
-                        <>
-                          <span className="i-carbon-checkmark w-4 h-4" />
-                          Link Copied!
-                        </>
-                      ) : (
-                        <>
-                          🔗 Copy Share Link
-                        </>
-                      )}
-                    </button>
-                  </div>
-
-                  <p className="text-sm text-gray-500 mb-6">
-                    ⏰ This code will expire in 24 hours
-                  </p>
-                  <button
-                    onClick={() => {
-                      setRetrievalCode('')
-                      setFile(null)
-                      setUploadProgress(0)
-                    }}
-                    className="text-purple-600 hover:text-purple-700 font-medium hover:scale-105 transition-transform duration-300"
-                  >
-                    📤 Upload Another File
-                  </button>
-                </div>
-              )}
-            </>
-          ) : (
-            // Retrieve Mode
-            <>
-              {!retrievedFile ? (
-                <>
-                  <div className="text-center mb-8">
-                    <div className="inline-block transform hover:scale-110 transition-transform duration-300">
-                      <svg
-                        className="mx-auto h-16 w-16 text-purple-400 mb-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={1.5}
-                          d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                        />
-                      </svg>
-                    </div>
-                    <h2 className="text-2xl font-bold text-gray-900 mb-2">🔓 Enter Retrieval Code</h2>
-                    <p className="text-gray-600">Input the code you received</p>
-                  </div>
-
-                  <input
-                    type="text"
-                    value={inputCode}
-                    onChange={(e) => setInputCode(e.target.value.toUpperCase())}
-                    placeholder="XXXXXX"
-                    maxLength={6}
-                    className="input-gradient w-full p-4 text-center text-2xl font-mono tracking-widest mb-4 hover:shadow-lg focus:shadow-xl"
-                  />
-
-                  {error && (
-                    <div className="mb-4 p-4 bg-red-50 rounded-xl border border-red-100 animate-pulse">
-                      <p className="text-sm text-red-600">❌ {error}</p>
-                    </div>
-                  )}
-
-                  <button
-                    onClick={handleRetrieve}
-                    disabled={inputCode.length !== 6 || retrieving}
-                    className="btn-gradient w-full py-4 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 disabled:hover:scale-100"
-                  >
-                    {retrieving ? '⏳ Retrieving...' : '📥 Retrieve File'}
-                  </button>
-                </>
-              ) : (
-                // Retrieved File State
-                <div className="text-center py-8">
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <span className="text-3xl">📄</span>
-                  </div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">✨ File Retrieved!</h2>
-                  
-                  <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 rounded-2xl p-6 mb-6">
-                    <p className="text-lg font-medium text-gray-800 mb-2">{retrievedFile.filename}</p>
-                    <p className="text-sm text-gray-500">
-                      {(retrievedFile.size / 1024 / 1024).toFixed(2)} MB
-                    </p>
-                  </div>
-
-                  <div className="flex gap-3 justify-center mb-6">
-                    {isPreviewable(retrievedFile.filename) && (
-                      <button
-                        onClick={handlePreview}
-                        className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl font-medium hover:shadow-lg transition-all hover:scale-105"
-                      >
-                        <span className="i-carbon-view w-5 h-5" />
-                        Preview
-                      </button>
-                    )}
-                    <button
-                      onClick={handleDownload}
-                      className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-medium hover:shadow-lg transition-all hover:scale-105"
-                    >
-                      <span className="i-carbon-download w-5 h-5" />
-                      Download
-                    </button>
-                  </div>
-
-                  <button
-                    onClick={() => {
-                      setRetrievedFile(null)
-                      setInputCode('')
-                    }}
-                    className="text-purple-600 hover:text-purple-700 font-medium hover:scale-105 transition-transform duration-300"
-                  >
-                    🔓 Retrieve Another File
-                  </button>
-                </div>
-              )}
-            </>
-          )}
-        </div>
-
-        {/* Footer */}
-        <div className="text-center mt-8 space-y-3">
-          <p className="text-sm text-gray-500">
-            ⏰ Files are automatically deleted after 24 hours
-          </p>
-          <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
-            <span>Made with</span>
-            <span className="text-red-500 animate-pulse">❤️</span>
-            <span>by</span>
-            <a
-              href="https://github.com/3urek4"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-medium text-purple-600 hover:text-purple-700 hover:underline transition-all hover:scale-105 inline-block"
+          {/* Mode Tabs */}
+          <div className="flex gap-1 p-1 bg-neutral-100 dark:bg-neutral-800 rounded-lg mb-8">
+            <button
+              onClick={() => {
+                setMode('upload')
+                setRetrievalCode('')
+                setError('')
+                setRetrievedFile(null)
+              }}
+              className={`flex-1 py-2.5 px-4 rounded-md text-sm font-medium transition-all ${
+                mode === 'upload'
+                  ? 'bg-white dark:bg-neutral-900 text-neutral-900 dark:text-white shadow-sm'
+                  : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white'
+              }`}
             >
-              3urek4
-            </a>
+              Upload
+            </button>
+            <button
+              onClick={() => {
+                setMode('retrieve')
+                setError('')
+              }}
+              className={`flex-1 py-2.5 px-4 rounded-md text-sm font-medium transition-all ${
+                mode === 'retrieve'
+                  ? 'bg-white dark:bg-neutral-900 text-neutral-900 dark:text-white shadow-sm'
+                  : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white'
+              }`}
+            >
+              Retrieve
+            </button>
           </div>
-          <p className="text-xs text-gray-400">
-            © {new Date().getFullYear()} SnapFile. All rights reserved.
-          </p>
+
+          {/* Main Card */}
+          <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-8">
+            {mode === 'upload' ? (
+              <>
+                {!retrievalCode ? (
+                  <>
+                    {/* Drop Zone */}
+                    <div
+                      {...getRootProps()}
+                      className={`border-2 border-dashed rounded-lg p-16 text-center cursor-pointer transition-colors ${
+                        isDragActive
+                          ? 'border-neutral-900 dark:border-white bg-neutral-50 dark:bg-neutral-800'
+                          : 'border-neutral-300 dark:border-neutral-700 hover:border-neutral-400 dark:hover:border-neutral-600'
+                      }`}
+                    >
+                      <input {...getInputProps()} />
+                      <div className="flex flex-col items-center gap-4">
+                        <div className="w-12 h-12 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center">
+                          <svg
+                            className="w-6 h-6 text-neutral-600 dark:text-neutral-400"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                            />
+                          </svg>
+                        </div>
+                        {isDragActive ? (
+                          <p className="text-sm font-medium text-neutral-900 dark:text-white">Drop file here</p>
+                        ) : (
+                          <>
+                            <div>
+                              <p className="text-sm font-medium text-neutral-900 dark:text-white mb-1">
+                                Click to upload or drag and drop
+                              </p>
+                              <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                                Files are deleted after 24 hours
+                              </p>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Selected File */}
+                    {file && (
+                      <div className="mt-6">
+                        <div className="flex items-center justify-between p-4 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="w-8 h-8 rounded bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center flex-shrink-0">
+                              <svg className="w-4 h-4 text-neutral-600 dark:text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                              </svg>
+                            </div>
+                            <span className="text-sm font-medium text-neutral-900 dark:text-white truncate">{file.name}</span>
+                          </div>
+                          <span className="text-xs text-neutral-500 dark:text-neutral-400 flex-shrink-0 ml-4">
+                            {(file.size / 1024 / 1024).toFixed(2)} MB
+                          </span>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Upload Progress */}
+                    {uploading && uploadProgress > 0 && (
+                      <div className="mt-6">
+                        <div className="flex justify-between text-xs text-neutral-600 dark:text-neutral-400 mb-2">
+                          <span>Uploading</span>
+                          <span>{Math.round(uploadProgress)}%</span>
+                        </div>
+                        <div className="w-full bg-neutral-200 dark:bg-neutral-800 rounded-full h-1.5 overflow-hidden">
+                          <div
+                            className="h-full bg-neutral-900 dark:bg-white transition-all duration-300"
+                            style={{ width: `${uploadProgress}%` }}
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Error */}
+                    {error && (
+                      <div className="mt-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                        <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+                      </div>
+                    )}
+
+                    {/* Upload Button */}
+                    <button
+                      onClick={handleUpload}
+                      disabled={!file || uploading}
+                      className="w-full mt-6 py-3 px-4 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-lg text-sm font-medium hover:bg-neutral-800 dark:hover:bg-neutral-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      {uploading ? 'Uploading...' : 'Upload File'}
+                    </button>
+                  </>
+                ) : (
+                  // Success State
+                  <div className="text-center py-4">
+                    <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mx-auto mb-4">
+                      <svg
+                        className="w-6 h-6 text-green-600 dark:text-green-400"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    </div>
+                    <h2 className="text-lg font-semibold text-neutral-900 dark:text-white mb-1">Upload Complete</h2>
+                    <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-8">Use this code to retrieve your file</p>
+                    
+                    {/* Retrieval Code */}
+                    <div className="bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg p-6 mb-6">
+                      <p className="text-3xl font-mono font-semibold text-neutral-900 dark:text-white tracking-wider mb-4">
+                        {retrievalCode}
+                      </p>
+                      <button
+                        onClick={copyToClipboard}
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm font-medium text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
+                      >
+                        {copied ? (
+                          <>
+                            <span className="i-carbon-checkmark w-4 h-4" />
+                            Copied
+                          </>
+                        ) : (
+                          <>
+                            <span className="i-carbon-copy w-4 h-4" />
+                            Copy Code
+                          </>
+                        )}
+                      </button>
+                    </div>
+
+                    {/* QR Code & Share Link */}
+                    <div className="grid grid-cols-2 gap-4 mb-8">
+                      <div className="flex flex-col items-center">
+                        <div className="bg-white p-3 rounded-lg border border-neutral-200 mb-2">
+                          <QRCodeSVG value={shareUrl} size={120} level="H" />
+                        </div>
+                        <p className="text-xs text-neutral-500 dark:text-neutral-400">Scan QR code</p>
+                      </div>
+                      <div className="flex flex-col items-center justify-center">
+                        <button
+                          onClick={copyLink}
+                          className="w-full px-4 py-3 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-lg text-sm font-medium hover:bg-neutral-800 dark:hover:bg-neutral-100 transition-colors mb-2"
+                        >
+                          {copied ? 'Link Copied!' : 'Copy Share Link'}
+                        </button>
+                        <p className="text-xs text-neutral-500 dark:text-neutral-400">Share via URL</p>
+                      </div>
+                    </div>
+
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-6">
+                      Expires in 24 hours
+                    </p>
+                    <button
+                      onClick={() => {
+                        setRetrievalCode('')
+                        setFile(null)
+                        setUploadProgress(0)
+                      }}
+                      className="text-sm text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors"
+                    >
+                      Upload another file
+                    </button>
+                  </div>
+                )}
+              </>
+            ) : (
+              // Retrieve Mode
+              <>
+                {!retrievedFile ? (
+                  <>
+                    <div className="text-center mb-8">
+                      <div className="w-12 h-12 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center mx-auto mb-4">
+                        <svg
+                          className="w-6 h-6 text-neutral-600 dark:text-neutral-400"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                          />
+                        </svg>
+                      </div>
+                      <h2 className="text-lg font-semibold text-neutral-900 dark:text-white mb-1">Enter Retrieval Code</h2>
+                      <p className="text-sm text-neutral-500 dark:text-neutral-400">Input the 6-character code</p>
+                    </div>
+
+                    <input
+                      type="text"
+                      value={inputCode}
+                      onChange={(e) => setInputCode(e.target.value.toUpperCase())}
+                      placeholder="XXXXXX"
+                      maxLength={6}
+                      className="w-full p-4 text-center text-2xl font-mono tracking-widest bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:border-neutral-900 dark:focus:border-white focus:outline-none transition-colors mb-4 text-neutral-900 dark:text-white"
+                    />
+
+                    {error && (
+                      <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                        <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+                      </div>
+                    )}
+
+                    <button
+                      onClick={handleRetrieve}
+                      disabled={inputCode.length !== 6 || retrieving}
+                      className="w-full py-3 px-4 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-lg text-sm font-medium hover:bg-neutral-800 dark:hover:bg-neutral-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      {retrieving ? 'Retrieving...' : 'Retrieve File'}
+                    </button>
+                  </>
+                ) : (
+                  // Retrieved File State
+                  <div className="text-center py-4">
+                    <div className="w-12 h-12 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center mx-auto mb-4">
+                      <svg className="w-6 h-6 text-neutral-600 dark:text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                    </div>
+                    <h2 className="text-lg font-semibold text-neutral-900 dark:text-white mb-1">File Retrieved</h2>
+                    
+                    <div className="bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg p-6 mb-6 mt-6">
+                      <p className="text-base font-medium text-neutral-900 dark:text-white mb-2">{retrievedFile.filename}</p>
+                      <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                        {(retrievedFile.size / 1024 / 1024).toFixed(2)} MB
+                      </p>
+                    </div>
+
+                    <div className="flex gap-3 mb-6">
+                      {isPreviewable(retrievedFile.filename) && (
+                        <button
+                          onClick={handlePreview}
+                          className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white rounded-lg text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors"
+                        >
+                          <span className="i-carbon-view w-4 h-4" />
+                          Preview
+                        </button>
+                      )}
+                      <button
+                        onClick={handleDownload}
+                        className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-lg text-sm font-medium hover:bg-neutral-800 dark:hover:bg-neutral-100 transition-colors"
+                      >
+                        <span className="i-carbon-download w-4 h-4" />
+                        Download
+                      </button>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        setRetrievedFile(null)
+                        setInputCode('')
+                      }}
+                      className="text-sm text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors"
+                    >
+                      Retrieve another file
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
         </div>
-      </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="border-t border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 py-6">
+        <div className="max-w-6xl mx-auto px-6 text-center text-xs text-neutral-500 dark:text-neutral-400">
+          <p>Files are automatically deleted after 24 hours • © {new Date().getFullYear()} SnapFile</p>
+        </div>
+      </footer>
 
       {/* Preview Modal */}
       {previewing && retrievedFile && (
         <div
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50"
           onClick={() => setPreviewing(false)}
         >
           <div
-            className="bg-white rounded-3xl max-w-4xl max-h-[90vh] overflow-auto p-6"
+            className="bg-white dark:bg-neutral-900 rounded-xl max-w-5xl max-h-[90vh] overflow-auto shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-bold text-gray-900">{retrievedFile.filename}</h3>
+            <div className="flex justify-between items-center px-6 py-4 border-b border-neutral-200 dark:border-neutral-800">
+              <h3 className="text-base font-semibold text-neutral-900 dark:text-white truncate">{retrievedFile.filename}</h3>
               <button
                 onClick={() => setPreviewing(false)}
-                className="text-gray-500 hover:text-gray-700 text-2xl"
+                className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors"
               >
-                ×
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
             </div>
-            <div className="flex items-center justify-center">
+            <div className="p-6 flex items-center justify-center">
               {retrievedFile.filename.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
-                <img src={retrievedFile.url} alt={retrievedFile.filename} className="max-w-full h-auto rounded-xl" />
+                <img src={retrievedFile.url} alt={retrievedFile.filename} className="max-w-full h-auto rounded-lg" />
               ) : retrievedFile.filename.match(/\.pdf$/i) ? (
-                <iframe src={retrievedFile.url} className="w-full h-[70vh] rounded-xl" />
+                <iframe src={retrievedFile.url} className="w-full h-[70vh] rounded-lg" title="PDF Preview" />
               ) : (
-                <p className="text-gray-600">Preview not available for this file type</p>
+                <p className="text-neutral-500 dark:text-neutral-400">Preview not available for this file type</p>
               )}
             </div>
           </div>

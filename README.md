@@ -1,6 +1,6 @@
 # SnapFile
 
-A beautiful, minimalist file transfer web app with playful animations and modern design. Upload files from anywhere and retrieve them using a unique code. Files automatically delete after 24 hours for privacy.
+A professional, minimalist file transfer web app with clean design. Upload files from anywhere and retrieve them using a unique code. Files automatically delete after 24 hours for privacy.
 
 Built with **Vite + React + UnoCSS** for blazing fast development! ⚡
 
@@ -9,12 +9,13 @@ Made with ❤️ by [3urek4](https://github.com/3urek4)
 ## ✨ Features
 
 ### Core Features
-- 🎨 Clean, minimal design with cute gradient animations
+- 🎨 Clean, professional design inspired by Linear and Vercel
 - 📤 Single file upload with drag & drop
 - 🔐 Unique 6-character retrieval codes
 - ⏰ 24-hour auto-deletion
 - 📱 Fully responsive
 - ⚡ Deployed on Vercel with Blob Storage
+- 🌓 Dark mode support
 
 ### New in V2
 - 📋 **Copy code button** - One-click copy to clipboard
@@ -31,6 +32,13 @@ Made with ❤️ by [3urek4](https://github.com/3urek4)
 - 📦 **Vercel Blob** - File storage
 - 🔧 **TypeScript** - Type safety
 - 🎯 **Vercel Serverless Functions** - API endpoints
+
+### Design Philosophy
+- **Minimalism** - Clean interface with no unnecessary elements
+- **Typography-first** - Clear hierarchy and readable text
+- **Neutral palette** - Professional black/white/gray color scheme
+- **Accessible** - WCAG compliant contrast ratios
+- **Fast** - Instant interactions with smooth transitions
 
 ## 🚀 Quick Start (Local Development)
 
@@ -115,13 +123,14 @@ snapfile-v2/
 └── tsconfig.json            # TypeScript config
 ```
 
-## 🎨 UnoCSS Shortcuts
+## 🎨 Design System
 
-This project uses custom UnoCSS shortcuts for common patterns:
+This project uses a clean, professional design system:
 
-- `btn-gradient` - Gradient button with hover effects
-- `card-glass` - Glass morphism card effect
-- `input-gradient` - Gradient input background
+- **Color palette** - Neutral grays from 50-950 for maximum flexibility
+- **Typography** - System fonts with clear hierarchy
+- **Spacing** - Consistent spacing scale for visual rhythm
+- **Icons** - Carbon Design System icons via UnoCSS
 
 ## 🔧 Environment Variables
 
@@ -150,7 +159,7 @@ Vercel automatically sets these when you enable Blob Storage:
 
 ## 🎨 Design Credits
 
-Design inspiration from [DIYgod](https://diygod.cc) and [Anthony Fu](https://antfu.me)
+Design inspired by [Linear](https://linear.app), [Vercel](https://vercel.com), and [Shadcn/UI](https://ui.shadcn.com)
 
 ## 📝 License
 
