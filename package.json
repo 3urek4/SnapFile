@@ -1,29 +1,31 @@
 {
   "name": "snapfile",
-  "version": "1.0.0",
+  "version": "2.0.0",
+  "type": "module",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
     "@vercel/blob": "^0.24.1",
-    "next": "14.2.3",
+    "qrcode.react": "^3.1.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-dropzone": "^14.2.3"
   },
   "devDependencies": {
+    "@iconify-json/carbon": "^1.1.36",
     "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "autoprefixer": "^10.4.19",
-    "eslint": "^8",
-    "eslint-config-next": "14.2.3",
-    "postcss": "^8.4.38",
-    "tailwindcss": "^3.4.3",
-    "typescript": "^5"
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.0",
+    "@unocss/preset-icons": "^0.62.3",
+    "@unocss/preset-wind": "^0.62.3",
+    "@vercel/node": "^3.0.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "typescript": "^5.5.3",
+    "unocss": "^0.62.3",
+    "vite": "^5.4.2"
   }
 }

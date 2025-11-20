@@ -2,41 +2,56 @@
 
 A beautiful, minimalist file transfer web app with playful animations and modern design. Upload files from anywhere and retrieve them using a unique code. Files automatically delete after 24 hours for privacy.
 
+Built with **Vite + React + UnoCSS** for blazing fast development! ⚡
+
 Made with ❤️ by [3urek4](https://github.com/3urek4)
 
 ## ✨ Features
 
+### Core Features
 - 🎨 Clean, minimal design with cute gradient animations
-- 📤 Drag & drop file uploads
+- 📤 Single file upload with drag & drop
 - 🔐 Unique 6-character retrieval codes
 - ⏰ 24-hour auto-deletion
 - 📱 Fully responsive
 - ⚡ Deployed on Vercel with Blob Storage
-- 💜 Gradient UI inspired by modern design trends
 
-## Quick Start (Local Development)
+### New in V2
+- 📋 **Copy code button** - One-click copy to clipboard
+- 📱 **QR Code generation** - Scan to access on mobile
+- 🔗 **Shareable links** - Direct URL sharing
+- 📊 **Upload progress bar** - Real-time upload feedback
+- 👀 **File preview** - Preview images and PDFs before downloading
+- ⬇️ **Download functionality** - Separate download button
+
+### Tech Stack
+- ⚡ **Vite** - Lightning fast dev server
+- ⚛️ **React 18** - Modern React with hooks
+- 🎨 **UnoCSS** - Instant atomic CSS engine
+- 📦 **Vercel Blob** - File storage
+- 🔧 **TypeScript** - Type safety
+- 🎯 **Vercel Serverless Functions** - API endpoints
+
+## 🚀 Quick Start (Local Development)
 
 ```bash
 # Install dependencies
 npm install
 
-# Run development server
+# Run development server (super fast!)
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [http://localhost:5173](http://localhost:5173) in your browser.
 
-## Deploy to Vercel
+## 📦 Deploy to Vercel
 
 ### Step 1: Push to GitHub
 
 ```bash
-# Initialize git (if not already done)
 git init
 git add .
-git commit -m "Initial commit"
-
-# Create a new repository on GitHub, then:
+git commit -m "Initial commit - Vite + UnoCSS"
 git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git
 git push -u origin main
 ```
@@ -46,7 +61,7 @@ git push -u origin main
 1. Go to [vercel.com](https://vercel.com) and sign in
 2. Click **"Add New..."** → **"Project"**
 3. Import your GitHub repository
-4. Vercel will auto-detect Next.js settings
+4. Vercel will auto-detect the Vite configuration
 5. Click **"Deploy"**
 
 ### Step 3: Enable Vercel Blob Storage
@@ -56,83 +71,95 @@ After your first deployment:
 1. Go to your project dashboard on Vercel
 2. Click **"Storage"** tab
 3. Click **"Create Database"** → Select **"Blob"**
-4. Click **"Create"**
-5. Vercel will automatically add the `BLOB_READ_WRITE_TOKEN` environment variable
+4. Give it any name you like
+5. Click **"Create"**
+6. The `BLOB_READ_WRITE_TOKEN` environment variable will be automatically added
 
-That's it! Your app is now live and ready to use. 🎉
+### Step 4: Redeploy
 
-## How It Works
+After adding Blob storage, redeploy to activate it:
+- Go to **Deployments** → Click **"..."** → **"Redeploy"**
+
+That's it! Your app is live! 🎉
+
+## 🎯 How It Works
 
 ### Upload Mode
-1. Drag & drop files or click to browse
-2. Click "Upload Files"
+1. Drag & drop a file or click to browse
+2. Watch the progress bar as it uploads
 3. Receive a unique 6-character code
-4. Share the code with yourself or others
+4. Copy the code, scan the QR code, or share the direct link
+5. Files expire after 24 hours
 
 ### Retrieve Mode
 1. Switch to "Retrieve" tab
-2. Enter the 6-character code
-3. Files download automatically
-4. Code expires after 24 hours
+2. Enter the 6-character code (or access via shared link)
+3. Preview the file (if it's an image or PDF)
+4. Download when ready
 
-## Tech Stack
-
-- **Framework**: Next.js 14 (App Router)
-- **Styling**: Tailwind CSS
-- **Storage**: Vercel Blob Storage
-- **Deployment**: Vercel
-- **Language**: TypeScript
-
-## File Structure
+## 📁 Project Structure
 
 ```
-file-transfer-app/
-├── app/
-│   ├── api/
-│   │   ├── upload/route.ts      # Upload endpoint
-│   │   └── retrieve/route.ts    # Retrieve endpoint
-│   ├── layout.tsx               # Root layout
-│   ├── page.tsx                 # Main UI component
-│   └── globals.css              # Global styles
-├── public/                      # Static assets
-├── package.json                 # Dependencies
-├── next.config.mjs             # Next.js config
-├── tailwind.config.js          # Tailwind config
-└── tsconfig.json               # TypeScript config
+snapfile-v2/
+├── src/
+│   ├── App.tsx              # Main React component
+│   └── main.tsx             # React entry point
+├── api/
+│   ├── upload.ts            # Upload serverless function
+│   └── retrieve.ts          # Retrieve serverless function
+├── index.html               # HTML entry
+├── vite.config.ts           # Vite configuration
+├── uno.config.ts            # UnoCSS configuration
+├── vercel.json              # Vercel deployment config
+├── package.json             # Dependencies
+└── tsconfig.json            # TypeScript config
 ```
 
-## Environment Variables
+## 🎨 UnoCSS Shortcuts
+
+This project uses custom UnoCSS shortcuts for common patterns:
+
+- `btn-gradient` - Gradient button with hover effects
+- `card-glass` - Glass morphism card effect
+- `input-gradient` - Gradient input background
+
+## 🔧 Environment Variables
 
 Vercel automatically sets these when you enable Blob Storage:
 
 - `BLOB_READ_WRITE_TOKEN` - Vercel Blob storage token (auto-configured)
 
-## Notes
+## 📊 File Size Limits
 
-- Maximum file size: Depends on your Vercel plan (typically 4.5 MB on Free, 100 MB+ on Pro)
-- Files are stored in Vercel Blob Storage
-- Metadata is stored as JSON files
-- Auto-cleanup: Files expire after 24 hours (manual cleanup script can be added via Vercel Cron)
+- Free tier: 4.5 MB per file
+- Pro tier: 100 MB+ per file
 
-## Optional: Add Cron Job for Cleanup
+## 🌟 Why Vite + UnoCSS?
 
-To automatically clean up expired files, add this to `vercel.json`:
+### Vite Benefits
+- ⚡ **Instant server start** - No bundling in dev
+- 🔥 **Lightning fast HMR** - Sub-100ms updates
+- 🎯 **Optimized builds** - Rollup-based production builds
+- 📦 **Smart code splitting** - Automatic optimization
 
-```json
-{
-  "crons": [{
-    "path": "/api/cleanup",
-    "schedule": "0 */6 * * *"
-  }]
-}
-```
+### UnoCSS Benefits
+- 🚀 **Instant** - No parsing, no extracting, instant
+- 🎨 **Flexible** - Fully customizable design system
+- 📦 **Tiny bundle** - Only includes used styles
+- 💪 **Powerful** - Attributify, variants, shortcuts
 
-Then create `app/api/cleanup/route.ts` to delete expired files.
+## 🎨 Design Credits
 
-## License
+Design inspiration from [DIYgod](https://diygod.cc) and [Anthony Fu](https://antfu.me)
+
+## 📝 License
 
 MIT
 
+## 🤝 Contributing
+
+Issues and PRs welcome!
+
 ---
 
-Made with ❤️ by [3urek4](https://github.com/3urek4) using Next.js and Vercel
+Made with ❤️ by [3urek4](https://github.com/3urek4) using Vite, React, and UnoCSS
