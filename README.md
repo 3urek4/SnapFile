@@ -1,15 +1,18 @@
 # SnapFile
 
-A beautiful, minimalist file transfer web app with Apple-inspired design. Upload files from anywhere and retrieve them using a unique code. Files automatically delete after 24 hours for privacy.
+A beautiful, minimalist file transfer web app with playful animations and modern design. Upload files from anywhere and retrieve them using a unique code. Files automatically delete after 24 hours for privacy.
 
-## Features
+Made with ❤️ by [3urek4](https://github.com/3urek4)
 
-- 🎨 Clean, minimal Apple-inspired design
+## ✨ Features
+
+- 🎨 Clean, minimal design with cute gradient animations
 - 📤 Drag & drop file uploads
 - 🔐 Unique 6-character retrieval codes
 - ⏰ 24-hour auto-deletion
 - 📱 Fully responsive
 - ⚡ Deployed on Vercel with Blob Storage
+- 💜 Gradient UI inspired by modern design trends
 
 ## Quick Start (Local Development)
 
@@ -132,4 +135,4 @@ MIT
 
 ---
 
-Built with ❤️ using Next.js and Vercel
+Made with ❤️ by [3urek4](https://github.com/3urek4) using Next.js and Vercel
