@@ -2,6 +2,30 @@ import { useState, useCallback, useEffect } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { QRCodeSVG } from 'qrcode.react'
 
+type SectionHeadlineProps = {
+  title: string
+  description: string
+}
+
+const SectionHeadline = ({ title, description }: SectionHeadlineProps) => (
+  <div className="text-center mb-8">
+    <h2 className="text-lg font-semibold text-neutral-900 dark:text-white mb-1">{title}</h2>
+    <p className="text-sm text-neutral-500 dark:text-neutral-400">{description}</p>
+  </div>
+)
+
+const InfoBanner = ({ text }: { text: string }) => (
+  <div className="mt-8 rounded-lg border border-dashed border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800/40 px-4 py-3 text-center">
+    <p className="text-xs text-neutral-600 dark:text-neutral-300">{text}</p>
+  </div>
+)
+
+const ErrorNotice = ({ message, className = '' }: { message: string; className?: string }) => (
+  <div className={`p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg ${className}`}>
+    <p className="text-sm text-red-600 dark:text-red-400">{message}</p>
+  </div>
+)
+
 export default function App() {
   const [mode, setMode] = useState<'upload' | 'retrieve'>('upload')
   const [file, setFile] = useState<File | null>(null)
@@ -11,7 +35,7 @@ export default function App() {
   const [inputCode, setInputCode] = useState('')
   const [retrieving, setRetrieving] = useState(false)
   const [error, setError] = useState('')
-  const [copied, setCopied] = useState(false)
+  const [copyState, setCopyState] = useState<'idle' | 'code' | 'link'>('idle')
   const [retrievedFile, setRetrievedFile] = useState<{
     filename: string
     url: string
@@ -109,22 +133,11 @@ export default function App() {
     }
   }
 
-  const copyToClipboard = async () => {
+  const handleCopy = async (value: string, type: 'code' | 'link') => {
     try {
-      await navigator.clipboard.writeText(retrievalCode)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    } catch (err) {
-      console.error('Failed to copy:', err)
-    }
-  }
-
-  const copyLink = async () => {
-    try {
-      const link = `${window.location.origin}?code=${retrievalCode}`
-      await navigator.clipboard.writeText(link)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
+      await navigator.clipboard.writeText(value)
+      setCopyState(type)
+      setTimeout(() => setCopyState('idle'), 2000)
     } catch (err) {
       console.error('Failed to copy:', err)
     }
@@ -153,6 +166,7 @@ export default function App() {
   }
 
   const shareUrl = `${window.location.origin}?code=${retrievalCode}`
+  const retentionCopy = 'Files are automatically deleted after 24 hours.'
 
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 flex flex-col">
@@ -219,6 +233,10 @@ export default function App() {
               <>
                 {!retrievalCode ? (
                   <>
+                    <SectionHeadline
+                      title="Send a file"
+                      description="Drag a file below and we'll generate a one-time pickup code."
+                    />
                     {/* Drop Zone */}
                     <div
                       {...getRootProps()}
@@ -246,18 +264,14 @@ export default function App() {
                           </svg>
                         </div>
                         {isDragActive ? (
-                          <p className="text-sm font-medium text-neutral-900 dark:text-white">Drop file here</p>
+                          <p className="text-sm font-medium text-neutral-900 dark:text-white">Drop your file to start uploading</p>
                         ) : (
-                          <>
-                            <div>
-                              <p className="text-sm font-medium text-neutral-900 dark:text-white mb-1">
-                                Click to upload or drag and drop
-                              </p>
-                              <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                                Files are deleted after 24 hours
-                              </p>
-                            </div>
-                          </>
+                          <div>
+                            <p className="text-sm font-medium text-neutral-900 dark:text-white mb-1">
+                              Drag a file here or click to browse
+                            </p>
+                            <p className="text-xs text-neutral-500 dark:text-neutral-400">Single uploads up to 2 GB</p>
+                          </div>
                         )}
                       </div>
                     </div>
@@ -298,11 +312,7 @@ export default function App() {
                     )}
 
                     {/* Error */}
-                    {error && (
-                      <div className="mt-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                        <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
-                      </div>
-                    )}
+                    {error && <ErrorNotice message={error} className="mt-6" />}
 
                     {/* Upload Button */}
                     <button
@@ -331,8 +341,8 @@ export default function App() {
                         />
                       </svg>
                     </div>
-                    <h2 className="text-lg font-semibold text-neutral-900 dark:text-white mb-1">Upload Complete</h2>
-                    <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-8">Use this code to retrieve your file</p>
+                    <h2 className="text-lg font-semibold text-neutral-900 dark:text-white mb-1">Upload complete</h2>
+                    <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-8">Share the code or link below to hand off the file.</p>
                     
                     {/* Retrieval Code */}
                     <div className="bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg p-6 mb-6">
@@ -340,10 +350,10 @@ export default function App() {
                         {retrievalCode}
                       </p>
                       <button
-                        onClick={copyToClipboard}
+                        onClick={() => handleCopy(retrievalCode, 'code')}
                         className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm font-medium text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
                       >
-                        {copied ? (
+                        {copyState === 'code' ? (
                           <>
                             <span className="i-carbon-checkmark w-4 h-4" />
                             Copied
@@ -367,18 +377,15 @@ export default function App() {
                       </div>
                       <div className="flex flex-col items-center justify-center">
                         <button
-                          onClick={copyLink}
+                          onClick={() => handleCopy(shareUrl, 'link')}
                           className="w-full px-4 py-3 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-lg text-sm font-medium hover:bg-neutral-800 dark:hover:bg-neutral-100 transition-colors mb-2"
                         >
-                          {copied ? 'Link Copied!' : 'Copy Share Link'}
+                          {copyState === 'link' ? 'Link copied' : 'Copy share link'}
                         </button>
                         <p className="text-xs text-neutral-500 dark:text-neutral-400">Share via URL</p>
                       </div>
                     </div>
 
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-6">
-                      Expires in 24 hours
-                    </p>
                     <button
                       onClick={() => {
                         setRetrievalCode('')
@@ -397,25 +404,10 @@ export default function App() {
               <>
                 {!retrievedFile ? (
                   <>
-                    <div className="text-center mb-8">
-                      <div className="w-12 h-12 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center mx-auto mb-4">
-                        <svg
-                          className="w-6 h-6 text-neutral-600 dark:text-neutral-400"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                          />
-                        </svg>
-                      </div>
-                      <h2 className="text-lg font-semibold text-neutral-900 dark:text-white mb-1">Enter Retrieval Code</h2>
-                      <p className="text-sm text-neutral-500 dark:text-neutral-400">Input the 6-character code</p>
-                    </div>
+                    <SectionHeadline
+                      title="Receive a file"
+                      description="Enter the 6-character code you were given to pull it down."
+                    />
 
                     <input
                       type="text"
@@ -426,11 +418,7 @@ export default function App() {
                       className="w-full p-4 text-center text-2xl font-mono tracking-widest bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:border-neutral-900 dark:focus:border-white focus:outline-none transition-colors mb-4 text-neutral-900 dark:text-white"
                     />
 
-                    {error && (
-                      <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                        <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
-                      </div>
-                    )}
+                    {error && <ErrorNotice message={error} className="mb-4" />}
 
                     <button
                       onClick={handleRetrieve}
@@ -490,13 +478,14 @@ export default function App() {
               </>
             )}
           </div>
+          <InfoBanner text={retentionCopy} />
         </div>
       </main>
 
       {/* Footer */}
       <footer className="border-t border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 py-6">
         <div className="max-w-6xl mx-auto px-6 text-center text-xs text-neutral-500 dark:text-neutral-400">
-          <p>Files are automatically deleted after 24 hours • © {new Date().getFullYear()} SnapFile</p>
+          <p>Built for quick handoffs • © {new Date().getFullYear()} SnapFile</p>
         </div>
       </footer>
 
