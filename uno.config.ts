@@ -27,5 +27,5 @@ export default defineConfig({
       },
     },
   },
-  safelist: ['i-carbon-copy', 'i-carbon-checkmark', 'i-carbon-download', 'i-carbon-view'],
+  safelist: ['i-carbon-copy', 'i-carbon-checkmark', 'i-carbon-download', 'i-carbon-view', 'i-carbon-logo-github'],
 })
